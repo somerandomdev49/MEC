@@ -43,6 +43,14 @@ void draw(SCR *scr)
     }
 }
 
+void flush_stdin()
+{
+    int c;
+    do {
+        c = getchar();
+    } while(c != '\n' && c != EOF);
+}
+
 #define instr_op(n, o) case I_##n: cpu->regs[0] = cpu->regs[i.a] o cpu->regs[i.b]; break;
 void run(INS *c, num_t *ram, CPU *cpu, SCR *scr, VAL *val)
 {
@@ -60,9 +68,9 @@ void run(INS *c, num_t *ram, CPU *cpu, SCR *scr, VAL *val)
     case I_JMP: cpu->pc = mk_num(i.a, i.b);      break;
     case I_CJP: if(cpu->regs[0]) cpu->pc = mk_num(i.a, i.b); break;
     case I_ADD: cpu->regs[0] = cpu->regs[i.a] + cpu->regs[i.b]; break;
-    case I_GET: scanf("%d", &cpu->regs[i.a]);    break;
-    case I_PAU: system("pause");                 break;
-    case I_PUT: printf(val[i.a].d);
+    case I_GET: scanf("%hd", &cpu->regs[i.a]); break;
+    case I_PAU: puts("Press [Enter]"); flush_stdin(); getchar();break;
+    case I_PUT: printf("%s", val[i.a].d);       break;
 
     instr_op(SUB, -);
     instr_op(MUL, *);
