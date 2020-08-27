@@ -1,2 +1,4 @@
+VAL "Hello, World!"
 SPX 4 4
-DRW 0
+DRW
+JMP 123
