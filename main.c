@@ -1,35 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <inttypes.h>
+#include "mec.h"
 
-typedef uint16_t num_t;
-typedef uint8_t byte;
 // CPU
 typedef struct { num_t pc, regs[16]; } CPU;
 typedef struct { num_t w, h; byte *buf; } SCR;
-typedef struct { byte t, a, b; } INS;
 typedef struct { byte i; char *d; } VAL;
-typedef INS *CPG;
-num_t mk_num(byte a, byte b) { return (a << 8) | (b); }
-
-enum
-{
-    I_IMM, // set register 0 to IMMediate value
-    I_MVR, // MV value from one Register to another.
-    I_MOV, // MOVe from register to value in memory.
-    I_STR, // SeT Register to value in memory.
-    I_SPX, // Switch PiXel.
-    I_DRW, // DRaW scrren buffer.
-    I_CLS, // CLear Screen.
-    I_GET, // GET a number.
-    I_CLL, // CaLL a function.
-    I_PAU, // PAUse
-    I_PUT, // PUT a string to the console.
-
-    I_ADD, I_SUB, I_MUL, I_DIV, I_AND, I_OR, I_NOT, I_CLT, I_CGT, I_CLE, I_CGE,
-    I_JMP, // JuMP to immediate instruction.
-    I_CJP, // Conditional JumP (if register SP is truthy then jump).
-};
 
 void draw(SCR *scr)
 {
@@ -76,6 +52,7 @@ void run(INS *c, num_t *ram, CPU *cpu, SCR *scr, VAL *val)
     instr_op(MUL, *);
     instr_op(DIV, /);
     instr_op(AND, &);
+    instr_op(COR, |);
     instr_op(CLT, <);
     instr_op(CGT, >);
     instr_op(CLE, <=);
