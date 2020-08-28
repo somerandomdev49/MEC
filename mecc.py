@@ -31,7 +31,7 @@ for line in f.readlines():
     if line[0] == ';': continue
     print(str(i) + " |", line)
 
-    toks = shlex.split(line)
+    toks = [bytes(x, "utf-8").decode("unicode_escape") for x in shlex.split(line)]
     if toks[0] == "VAL":
         vals.append(toks[1])
         continue
@@ -57,6 +57,8 @@ for val in vals:
     for c in val:
         bin_out.append(ord(c))
     bin_out.append(0)
+
+bin_out.extend(len(inst).to_bytes(length=2, byteorder="big"))
 for ins in inst:
     bin_out.append(ins["name"])
     if len(ins["args"]) == 0:

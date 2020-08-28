@@ -1,4 +1,26 @@
-VAL "Hello, World!"
-SPX 4 4
-DRW
-JMP 123
+VAL "Hello World!\n"
+PUT  0 0
+GET  2 0
+IMM   12
+MVR  1 0
+IMM   34
+ADD  0 1
+MVR  1 0
+IMM 47
+CLT  2 1
+CJP 13
+SPX  5 6
+SPX  0 6
+JMP 15
+SPX  0 4
+SPX  5 4
+SPX  1 1
+SPX  1 2
+SPX  4 1
+SPX  4 2
+SPX  1 5
+SPX  2 5
+SPX  3 5
+SPX  4 5
+DRW  0 0
+PAU  0 0

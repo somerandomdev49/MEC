@@ -1,2 +1,5 @@
 main.exe
 main
+main.dSYM
+.vscode/**
+.vscode
