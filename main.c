@@ -96,7 +96,7 @@ void read(FILE *in, VAL *val[], int *val_count, INS *ins[], int *ins_count)
     for(int i=0;i<*val_count;++i) *val[i] = (VAL){ i, read_str(in) };
     *ins_count = read_num(in);
     printf("instruction count: %d, (%lu bytes per INS -> %lu bytes total)\n", *ins_count, sizeof(INS), *ins_count * sizeof(INS));
-    *ins = malloc(9); // (*ins_count) * sizeof(INS)
+    *ins = malloc((*ins_count) * sizeof(INS));
     //printf("%d", (*ins)[1].t);
     puts("reading instructions:");
     for(int i=0;i<*ins_count;++i)
