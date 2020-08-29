@@ -11,20 +11,22 @@ void draw(SCR *scr)
 {
     for(num_t y=0;y<scr->h;++y)
     {
-	for(num_t x=0;x<scr->w;++x)
-	{
-	    putchar(scr->buf[x+y*scr->w] ? '*' : ' ');
-	}
-	putchar('\n');
+        for(num_t x=0;x<scr->w;++x)
+        {
+            putchar(scr->buf[x+y*scr->w] ? '*' : ' ');
+        }
+        putchar('\n');
     }
 }
 
 void flush_stdin()
 {
     int c;
-    do {
+    do
+    {
         c = getchar();
-    } while(c != '\n' && c != EOF);
+    }
+    while(c != '\n' && c != EOF);
 }
 
 int fpeek(FILE *stream)
@@ -40,9 +42,9 @@ int fpeek(FILE *stream)
 #define instr_op(n, o) case I_##n: cpu->regs[0] = cpu->regs[i.a] o cpu->regs[i.b]; break;
 void run(INS *c, num_t *ram, CPU *cpu, SCR *scr, VAL *val)
 {
-    //printf("CPU INFO:\n\tPC: %d, REG0: %d, REG1: %d\n", cpu->pc, cpu->regs[0], cpu->regs[1]);
+    //debug_printf("CPU INFO:\n\tPC: %d, REG0: %d, REG1: %d\n", cpu->pc, cpu->regs[0], cpu->regs[1]);
     INS i = c[cpu->pc++];
-    //printf("INSTRUCTION: %d -> %d, %d\n", i.t, i.a, i.b);
+    //debug_printf("INSTRUCTION: %d -> %d, %d\n", i.t, i.a, i.b);
     switch(i.t)
     {
     case I_IMM: cpu->regs[0] = mk_num(i.a, i.b); break;
@@ -55,7 +57,7 @@ void run(INS *c, num_t *ram, CPU *cpu, SCR *scr, VAL *val)
     case I_CJP: if(cpu->regs[0]) cpu->pc = mk_num(i.a, i.b); break;
     case I_ADD: cpu->regs[0] = cpu->regs[i.a] + cpu->regs[i.b]; break;
     case I_GET: scanf("%hu", &cpu->regs[i.a]); break;
-    case I_PAU: puts("Press [Enter]"); flush_stdin(); getchar();break;
+    case I_PAU: debug_puts("Press [Enter]"); flush_stdin(); getchar();break;
     case I_PUT: printf("%s", val[i.a].d);       break;
 
     instr_op(SUB, -);
@@ -70,16 +72,16 @@ void run(INS *c, num_t *ram, CPU *cpu, SCR *scr, VAL *val)
     }
 }
 
-byte read_byte(FILE *in) { byte x = getc(in); printf("reading a byte %d, next %d\n", x, fpeek(in)); return x; }
+byte read_byte(FILE *in) { byte x = getc(in); debug_printf("reading a byte %d, next %d\n", x, fpeek(in)); return x; }
 num_t read_num(FILE *in) { byte a = read_byte(in), b = read_byte(in); return mk_num(a, b); } // wtf, no variables - reverse order of arguments, (a, b) -> (b, a) !?!?!??!
 char *read_str(FILE *in)
 {
-    puts("reading a string...");
+    debug_puts("reading a string...");
     num_t size = 0;
     char *s = malloc(size), c;
     while((c=read_byte(in)) != '\0' && c != EOF)
     {
-        printf("reading a character: '%c' %d\n", c, c);
+        debug_printf("reading a character: '%c' %d\n", c, c);
         s = realloc(s, ++size);
         s[size-1] = c;
     } 
@@ -88,35 +90,39 @@ char *read_str(FILE *in)
 
 void read(FILE *in, VAL *val[], int *val_count, INS *ins[], int *ins_count)
 {
-    puts("reading...");
+    debug_puts("reading...");
     *val_count = read_num(in);
-    printf("value count: %d\n", *val_count);
+    debug_printf("value count: %d\n", *val_count);
     *val = malloc(*val_count * sizeof(VAL));
-    puts("reading values:");
+    debug_puts("reading values:");
     for(int i=0;i<*val_count;++i) *val[i] = (VAL){ i, read_str(in) };
     *ins_count = read_num(in);
-    printf("instruction count: %d, (%lu bytes per INS -> %lu bytes total)\n", *ins_count, sizeof(INS), *ins_count * sizeof(INS));
+    debug_printf("instruction count: %d, (%lu bytes per INS -> %lu bytes total)\n", *ins_count, sizeof(INS), *ins_count * sizeof(INS));
     *ins = malloc((*ins_count) * sizeof(INS));
-    //printf("%d", (*ins)[1].t);
-    puts("reading instructions:");
+    //debug_printf("%d", (*ins)[1].t);
+    debug_puts("reading instructions:");
     for(int i=0;i<*ins_count;++i)
     {
-        printf("reading ins #%d\n", i);
-        printf("Next byte: %d\n", fpeek(in));
+        debug_printf("reading ins #%d\n", i);
+        debug_printf("Next byte: %d\n", fpeek(in));
         (*ins)[i] = (INS){ 0, 0, 0 };
-        puts("reading byte t");
+        debug_puts("reading byte t");
         (*ins)[i].t = read_byte(in);
-        puts("reading byte a");
+        debug_puts("reading byte a");
         (*ins)[i].a = read_byte(in);
-        puts("reading byte b");
+        debug_puts("reading byte b");
         (*ins)[i].b = read_byte(in);
-        puts("done reading ins.");
+        debug_puts("done reading ins.");
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    FILE *in = fopen("out.mecc", "r");
+    if(argc < 2) {
+        printf("Usage:\n\t%s <filename>\n", __FILE__);
+        return 1;
+    }
+    FILE *in = fopen(argv[1], "r");
 
     VAL *val; int val_size;
     INS *cpg; int cpg_size;
@@ -173,7 +179,7 @@ int main()
     free(s.buf);
     free(cpg);
     free(val);
-    //printf("R0: %d", cpu.regs[0]);
+    //debug_printf("R0: %d", cpu.regs[0]);
     return 0;
 }
 

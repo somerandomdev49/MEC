@@ -1,6 +1,16 @@
 #ifndef MEC_H
 #define MEC_H
 #include <inttypes.h>
+
+#ifdef DEBUG
+#include <stdio.h>
+#define debug_printf(...) debug_printf(__VA_ARGS__)
+#define debug_puts(...) debug_puts(__VA_ARGS__)
+#else
+#define debug_printf(...)
+#define debug_puts(...)
+#endif
+
 typedef uint16_t num_t;
 typedef uint8_t byte;
 typedef struct { byte t, a, b; } INS;
@@ -27,7 +37,7 @@ typedef INS *CPG;
 
 
 
-num_t mk_num(byte a, byte b) { printf("mk_num(%d, %d)\n", a, b); return (a << 8) | (b); }
+num_t mk_num(byte a, byte b) { debug_printf("mk_num(%d, %d)\n", a, b); return (a << 8) | (b); }
 
 enum
 {
