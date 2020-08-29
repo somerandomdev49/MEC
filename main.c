@@ -54,7 +54,7 @@ void run(INS *c, num_t *ram, CPU *cpu, SCR *scr, VAL *val)
     case I_JMP: cpu->pc = mk_num(i.a, i.b);      break;
     case I_CJP: if(cpu->regs[0]) cpu->pc = mk_num(i.a, i.b); break;
     case I_ADD: cpu->regs[0] = cpu->regs[i.a] + cpu->regs[i.b]; break;
-    case I_GET: scanf("%hd", &cpu->regs[i.a]); break;
+    case I_GET: scanf("%hu", &cpu->regs[i.a]); break;
     case I_PAU: puts("Press [Enter]"); flush_stdin(); getchar();break;
     case I_PUT: printf("%s", val[i.a].d);       break;
 
@@ -71,7 +71,7 @@ void run(INS *c, num_t *ram, CPU *cpu, SCR *scr, VAL *val)
 }
 
 byte read_byte(FILE *in) { byte x = getc(in); printf("reading a byte %d, next %d\n", x, fpeek(in)); return x; }
-num_t read_num(FILE *in) { return mk_num(read_byte(in), read_byte(in)); }
+num_t read_num(FILE *in) { byte a = read_byte(in), b = read_byte(in); return mk_num(a, b); } // wtf, no variables - reverse order of arguments, (a, b) -> (b, a) !?!?!??!
 char *read_str(FILE *in)
 {
     puts("reading a string...");

@@ -27,7 +27,7 @@ typedef INS *CPG;
 
 
 
-num_t mk_num(byte a, byte b) { return (a << 8) | (b); }
+num_t mk_num(byte a, byte b) { printf("mk_num(%d, %d)\n", a, b); return (a << 8) | (b); }
 
 enum
 {
